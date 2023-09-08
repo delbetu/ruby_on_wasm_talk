@@ -1,0 +1,25 @@
+<html>
+  <head>
+  <script type="text/javascript">
+    function openFile() {
+      const fileInput = document.getElementById('fileInput');
+      const fileContent = document.getElementById('fileContent');
+
+      const file = fileInput.files[0];
+      const reader = new FileReader();
+
+      reader.onload = function(evento) {
+        fileContent.textContent = evento.target.result;
+      };
+
+      reader.readAsText(file);
+    }
+  </script>
+  </head>
+
+  <body>
+    <input type="file" id="fileInput">
+    <button onclick="openFile()">Open file</button>
+    <div id="fileContent"></div>
+  </body>
+</html>

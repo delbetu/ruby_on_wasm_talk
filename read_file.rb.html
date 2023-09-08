@@ -1,0 +1,28 @@
+<html>
+  <head>
+  <script src="https://cdn.jsdelivr.net/npm/ruby-3_2-wasm-wasi@2.0.0/dist/browser.script.iife.js"></script>
+  <script type="text/ruby">
+    require 'js'
+
+    JS.global[:document].getElementById('openButton').addEventListener("click") do |_event|
+      fileInput = JS.global[:document].getElementById('fileInput')
+
+      fileContent = JS.global[:document].getElementById('fileContent')
+
+      file = fileInput[:files][0]
+      reader = JS.eval('return new FileReader()')
+
+      reader[:onload] = ->(event) {
+        fileContent[:textContent] = event[:target][:result]
+      }
+      reader.readAsText(file)
+    end
+  </script>
+  </head>
+
+  <body>
+    <input type="file" id="fileInput">
+    <button id="openButton">Open file</button>
+    <div id="fileContent"></div>
+  </body>
+</html>
