@@ -1,0 +1,17 @@
+task :run, [:target] do |t, args|
+  case args[:target]
+  when /hello.app/i
+    sh 'wasmtime run hello-app.wasm -- /src/hello_world.rb'
+  else
+    puts "Don't know how to run #{args[:target]}"
+  end
+end
+
+task :build, [:target] do |t, args|
+  case args[:target]
+  when /hello.app/i
+    sh 'wasi-vfs pack ruby.wasm --mapdir /src::./hello_app --mapdir /usr::./3_2-wasm32-unknown-wasi-full/usr -o hello-app.wasm'
+  else
+    puts "Don't know how to build #{args[:target]}"
+  end
+end

@@ -54,3 +54,6 @@ build-iPhoneSimulator/
 
 # Used by RuboCop. Remote config files pulled in from inherit_from directive.
 # .rubocop-https?--*
+wasmtime/*.wasm
+wasmtime/3_2-wasm32-unknown-wasi-full
+wasmtime/*.tar.gz
