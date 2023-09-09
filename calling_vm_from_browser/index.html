@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=5">
+    <title>Call Ruby</title>
+    <script src="https://cdn.jsdelivr.net/npm/@ruby/wasm-wasi@latest/dist/browser.umd.js"></script>
+    <script>
+      (async function() {
+              const { DefaultRubyVM } = window["ruby-wasm-wasi"];
+              // Fetch and instantiate WebAssembly binary
+              const response = await fetch(
+                      //      Tips: Replace the binary with debug info if you want symbolicated stack trace.
+                      //      (only nightly release for now)
+                      //      "https://cdn.jsdelivr.net/npm/ruby-head-wasm-wasi@next/dist/ruby.debug+stdlib.wasm"
+                      "https://cdn.jsdelivr.net/npm/ruby-head-wasm-wasi@latest/dist/ruby.wasm"
+                    );
+              const buffer = await response.arrayBuffer();
+              const module = await WebAssembly.compile(buffer);
+              const { vm } = await DefaultRubyVM(module);
+
+              const input = document.getElementById("editor")
+              const output = document.getElementById("output")
+              document.getElementById("evalRb").addEventListener("click", () => {
+                      output.value = vm.eval(input.value)
+                    })
+            })()
+    </script>
+  </head>
+  <body>
+    <main>
+      <nav>
+        <h1>Call Ruby</h1>
+        <span><button type="button" id="evalRb">Eval</button></span>
+      </nav>
+      <textarea id="editor">def fibonacci(n)
+        (n == 0 || n == 1) ? n : fibonacci(n - 1) + fibonacci(n - 2)
+        end
+        fibonacci(5)
+      </textarea>
+      <textarea id="output" disabled readonly>Loading...</textarea>
+    </main>
+  </body>
+</html>
