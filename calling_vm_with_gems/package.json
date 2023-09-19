@@ -1,0 +1,14 @@
+{
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "build": "node bin/build.js",
+    "serve": "node bin/serve.js"
+  },
+  "dependencies": {
+    "ruby-head-wasm-wasi": "^0.6.0"
+  },
+  "devDependencies": {
+    "esbuild": "^0.17.10"
+  }
+}
