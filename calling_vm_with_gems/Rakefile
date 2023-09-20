@@ -28,19 +28,18 @@ file "ruby.wasm" => ["head-wasm32-unknown-wasi-full-js"] do
   cp "head-wasm32-unknown-wasi-full-js/usr/local/bin/ruby", "ruby.wasm"
 end
 
-file "src/app.wasm" => ["Gemfile.lock", "wasi-vfs", "ruby.wasm"] do
+file "app.wasm" => ["Gemfile.lock", "wasi-vfs", "ruby.wasm"] do
   require "bundler/setup"
 
   # copy ruby user program into lib directory
-  Dir.glob("*.rb").each do |rb_file|
-    FileUtils.cp_r(rb_file, "lib")
-  end
+  FileUtils.mkdir_p("lib")
+  FileUtils.cp("app.rb", "lib")
 
   # copy gems from bundler directories into lib directory
   cp_r $:.find { _1.include?("kramdown") }, "."
 
-  `./wasi-vfs pack ruby.wasm --mapdir /lib::./lib --mapdir /usr::./head-wasm32-unknown-wasi-full-js/usr -o src/app.wasm`
+  `./wasi-vfs pack ruby.wasm --mapdir /lib::./lib --mapdir /usr::./head-wasm32-unknown-wasi-full-js/usr -o app.wasm`
   rm_rf "lib"
 end
 
-task default: ["src/app.wasm"]
+task default: ["app.wasm"]

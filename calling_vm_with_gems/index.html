@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=5">
+    <title>Call Ruby</title>
+  </head>
+  <body>
+    <main>
+      <nav>
+        <h1>Call Ruby</h1>
+        <span><button type="button" id="evalRb">Eval</button></span>
+      </nav>
+      <textarea id="editor">
+# Title
+this is a list
+
+- first
+- second
+- third
+      </textarea>
+      <textarea id="output" disabled readonly>Loading...</textarea>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/@ruby/wasm-wasi@latest/dist/browser.umd.js"></script>
+    <script>
+      const { DefaultRubyVM } = window["ruby-wasm-wasi"]
+
+      async function createRuby(vm) {
+        vm.eval(`
+          require "rubygems"
+          $:.unshift("/lib")
+          require_relative "/lib/app"
+        `)
+
+        return {
+          preview(name) {
+            const rubySource = `App.preview("${name}")`
+
+            return vm.eval(rubySource).toString()
+          },
+        }
+      }
+
+      async function main() {
+        const appWasm = await fetch("app.wasm")
+        const buffer = await appWasm.arrayBuffer()
+        const module = await WebAssembly.compile(buffer)
+        const { vm } = await DefaultRubyVM(module)
+        const ruby = await createRuby(vm)
+
+        const input = document.getElementById("editor")
+        const output = document.getElementById("output")
+        document.getElementById("evalRb").addEventListener("click", () => {
+          output.value = ruby.preview(input.value)
+        })
+      }
+      main()
+    </script>
+  </body>
+</html>
